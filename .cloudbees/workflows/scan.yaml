@@ -1,0 +1,16 @@
+apiVersion: automation.cloudbees.io/v1alpha1
+kind: workflow
+name: scan
+on:
+  workflow_dispatch:
+jobs:
+  scan:
+    steps:
+      - uses: cloudbees-io/ghactions-run-workflow@v1
+        name: Run scan workflow
+        with:
+          token: ${{ secrets.GHA_TOKEN }}
+          org-name: ldorg
+          repo-name: blackduck-demo
+          branch-name: main
+          workflow-name: scan
