@@ -1,0 +1,17 @@
+name: blackduck-scan
+on:
+  workflow_dispatch:
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Scan with Black Duck SCA
+        uses: cloudbees-io-gha/blackduck-scan-publish@v2
+        with:
+          api-token: ${{ secrets.BLACK_DUCK_TOKEN }}
+          server-url: ${{ secrets.BLACK_DUCK_URL }}
