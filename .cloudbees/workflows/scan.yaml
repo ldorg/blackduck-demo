@@ -6,7 +6,7 @@ on:
 jobs:
   scan:
     steps:
-      - uses: cloudbees-io/ghactions-run-workflow@v1
+      - uses: https://github.com/cloudbees-io/ghactions-run-workflow@v1
         name: Run scan workflow
         with:
           token: ${{ secrets.GHA_TOKEN }}
