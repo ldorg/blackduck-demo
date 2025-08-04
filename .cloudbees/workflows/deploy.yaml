@@ -1,0 +1,72 @@
+apiVersion: automation.cloudbees.io/v1alpha1
+kind: workflow
+name: deploy
+on:
+  workflow_call:
+    inputs:
+      artifact-id:
+        type: string
+        required: true
+      artifactVersion:
+        type: string
+        required: true
+      environment:
+        type: string
+        required: true
+  workflow_dispatch:
+    inputs:
+      artifact-id:
+        type: string
+        required: true
+      artifactVersion:
+        type: string
+        required: true
+        default: latest
+      environment:
+        type: string
+        required: true
+        default: micro-hacker
+env:
+  APP_NAME: microhacker-web
+jobs:
+  deploy:
+    environment: ${{ inputs.environment }}
+    steps:
+      - name: Checkout
+        uses: cloudbees-io/checkout@v1
+        with:
+          repository: cloudbees-days/hackers-web
+      - uses: cashokannamalai/kubeconfig@v1
+        name: Set kubeconfig
+        with:
+          secname: ${{ secrets.kubeconfig }}
+      - id: install-chart
+        name: Install helm chart
+        uses: cloudbees-io/helm-install@v1
+        with:
+          chart-location: ${{ cloudbees.workspace }}/chart
+          release-name: ${{ env.APP_NAME }}
+          namespace: ${{ vars.namespace }}
+          values: |
+            image:
+              repository: ${{ secrets.DOCKERHUB_USER }}/hackers-web
+              tag: ${{ inputs.artifactVersion }}
+            hostname: hackers.${{ inputs.environment }}.preview.cb-demos.io
+            config:
+              fmKey: ${{ secrets.FM_TOKEN }}
+              apiUrl: https://hackers-api.${{ inputs.environment }}.preview.cb-demos.io/api
+              authUrl: https://hackers-auth.${{ inputs.environment }}.preview.cb-demos.io
+      - name: Register deployed artifact
+        uses: cloudbees-io/register-deployed-artifact@v2
+        with:
+          artifact-id: ${{ inputs.artifact-id }}
+          target-environment: ${{ inputs.environment }}
+      - name: Publish evidence
+        uses: cloudbees-io/publish-evidence-item@v1
+        with:
+          content: |-
+            ## Deployed environment
+            [Dev frontend](https://hackers.${{ inputs.environment }}.preview.cb-demos.io/)
+
+            Running hackers-web:${{ inputs.artifactVersion }}
+          format: MARKDOWN
