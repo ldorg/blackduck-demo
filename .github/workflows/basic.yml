@@ -14,7 +14,8 @@ jobs:
         
       - name: Run smoke tests
         run: |
-          cat > smoketest.xml << EOF
+          mkdir -p artifacts
+          cat > artifacts/smoketest.xml << EOF
           <?xml version="1.0" encoding="UTF-8"?>
           <testsuites name="Smoke Tests" tests="5" failures="1" errors="0" time="12.345">
             <testsuite name="API Tests" tests="3" failures="0" errors="0" time="8.234" timestamp="$(date -u +%Y-%m-%dT%H:%M:%SZ)">
@@ -35,7 +36,6 @@ jobs:
 
       - name: Build application
         run: |
-          mkdir -p artifacts
           cat > artifacts/build-metadata.json << EOF
           {
             "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
@@ -84,3 +84,8 @@ jobs:
         with:
           name: build-artifacts
           path: artifacts/build-metadata.json
+      - name: publish GHA run test results
+        uses: cloudbees-io-gha/publish-test-results@v2
+        with:
+          test-type: junit
+          results-path: artifacts/smoketest.xml
