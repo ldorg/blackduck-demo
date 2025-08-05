@@ -55,6 +55,7 @@ jobs:
           test-result-location: artifacts/smoketest.xml
         uses: cloudbees-io/ghactions-run-workflow@v2
       - name: Download GitHub artifact
+        id: download-artifact
         uses: https://github.com/cloudbees-days/github-get-artifact
         with:
           github-token: ${{ secrets.GHA_TOKEN }}
