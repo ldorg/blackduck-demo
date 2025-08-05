@@ -9,33 +9,78 @@ jobs:
       id-token: write
       contents: read
     steps:
-      - name: Create dummy JSON data
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Run smoke tests
         run: |
           mkdir -p artifacts
-          cat > artifacts/data.json << EOF
+          cat > artifacts/smoketest.xml << EOF
+          <?xml version="1.0" encoding="UTF-8"?>
+          <testsuites name="Smoke Tests" tests="5" failures="1" errors="0" time="12.345">
+            <testsuite name="API Tests" tests="3" failures="0" errors="0" time="8.234" timestamp="$(date -u +%Y-%m-%dT%H:%M:%SZ)">
+              <testcase classname="api.health" name="test_health_endpoint" time="1.234"/>
+              <testcase classname="api.auth" name="test_authentication" time="2.567"/>
+              <testcase classname="api.users" name="test_user_endpoints" time="4.433"/>
+            </testsuite>
+            <testsuite name="UI Tests" tests="2" failures="1" errors="0" time="4.111" timestamp="$(date -u +%Y-%m-%dT%H:%M:%SZ)">
+              <testcase classname="ui.login" name="test_login_form" time="2.888"/>
+              <testcase classname="ui.navigation" name="test_menu_navigation" time="1.223">
+                <failure message="Element not found" type="selenium.common.exceptions.NoSuchElementException">
+                  Expected element with id 'nav-menu' but was not found on page
+                </failure>
+              </testcase>
+            </testsuite>
+          </testsuites>
+          EOF
+
+      - name: Build application
+        run: |
+          cat > artifacts/build-metadata.json << EOF
           {
             "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
-            "build_number": "${{ github.run_number }}",
-            "commit_sha": "${{ github.sha }}",
-            "repository": "${{ github.repository }}",
-            "workflow": "${{ github.workflow }}",
-            "data": {
-              "users": [
-                {"id": 1, "name": "Alice", "email": "alice@example.com"},
-                {"id": 2, "name": "Bob", "email": "bob@example.com"},
-                {"id": 3, "name": "Charlie", "email": "charlie@example.com"}
-              ],
-              "metrics": {
-                "cpu_usage": 45.2,
-                "memory_usage": 78.9,
-                "disk_usage": 23.1
+            "build": {
+              "number": "${{ github.run_number }}",
+              "id": "build-${{ github.run_number }}-${{ github.sha }}",
+              "status": "success",
+              "duration_seconds": 145,
+              "triggered_by": "${{ github.actor }}"
+            },
+            "git": {
+              "commit_sha": "${{ github.sha }}",
+              "commit_message": "Add new user authentication feature with enhanced security",
+              "branch": "${{ github.ref_name }}",
+              "repository": "${{ github.repository }}"
+            },
+            "artifacts": {
+              "application": {
+                "name": "blackduck-scan-demo",
+                "version": "1.0.${{ github.run_number }}",
+                "type": "vue-spa",
+                "size_mb": 2.4,
+                "checksum": "sha256:a1b2c3d4e5f6789012345678901234567890abcdef1234567890abcdef123456"
               },
-              "status": "success"
+              "dependencies": {
+                "total_count": 847,
+                "production_count": 156,
+                "dev_count": 691
+              },
+              "tests": {
+                "total": 5,
+                "passed": 4,
+                "failed": 1,
+                "coverage_percentage": 78.5
+              }
+            },
+            "deployment": {
+              "environment": "staging",
+              "url": "https://staging.blackduck-demo.example.com",
+              "ready": true
             }
           }
           EOF
-      - name: Upload data artifact
+      - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: data
-          path: artifacts/data.json
+          name: build-artifacts
+          path: artifacts/build-metadata.json
