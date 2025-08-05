@@ -6,6 +6,7 @@ on:
 jobs:
   scan:
     steps:
+      - uses: actions/checkout@v4
       - name: Scan with Black Duck SCA
         id: blackduck-scan
         uses: cloudbees-io/blackduck-sca-scan-dependency@v2
