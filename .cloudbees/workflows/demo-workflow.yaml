@@ -51,4 +51,6 @@ jobs:
           repo-name: blackduck-demo
           branch-name: main
           workflow-name: basic
+          test-type: junit
+          test-result-location: artifacts/smoketest.xml
         uses: cloudbees-io/ghactions-run-workflow@v2
