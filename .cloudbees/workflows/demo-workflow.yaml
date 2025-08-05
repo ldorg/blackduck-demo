@@ -21,16 +21,17 @@ jobs:
         with:
           content: |
             # Scanner results
-            Critical: ${{ steps.blackduck-scan.outputs.critical-count }}
-            Very High: ${{ steps.blackduck-scan.outputs.very-high-count }}
-            High: ${{ steps.blackduck-scan.outputs.high-count }}
-            Medium: ${{ steps.blackduck-scan.outputs.medium-count }}
-            Low: ${{ steps.blackduck-scan.outputs.low-count }}
+            - Critical: **${{ steps.blackduck-scan.outputs.critical-count }}**
+            - Very High: **${{ steps.blackduck-scan.outputs.very-high-count }}**
+            - High: **${{ steps.blackduck-scan.outputs.high-count }}**
+            - Medium: **${{ steps.blackduck-scan.outputs.medium-count }}**
+            - Low: **${{ steps.blackduck-scan.outputs.low-count }}**
+
       - name: Security gate
         if: steps.blackduck-scan.outputs.critical-count > 0 || steps.blackduck-scan.outputs.very-high-count > 0
         uses: docker://alpine:3.20
         run: |
-          echo "Security gate failed"
+          echo "Security gate failed due to ${{ steps.blackduck-scan.outputs.critical-count }} critical and ${{ steps.blackduck-scan.outputs.very-high-count }} very high vulnerabilities"
           exit 1
   build:
     needs:
