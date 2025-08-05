@@ -54,3 +54,20 @@ jobs:
           test-type: junit
           test-result-location: artifacts/smoketest.xml
         uses: cloudbees-io/ghactions-run-workflow@v2
+      - name: Download GitHub artifact
+        uses: https://github.com/cloudbees-days/github-get-artifact
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          org-name: "ldorg"
+          repo-name: "blackduck-demo"
+          run-id: "16760154638"
+          artifact-name: "build-artifacts"
+      - name: Publish evidence
+        uses: cloudbees-io/publish-evidence-item@v1
+        with:
+          content: |-
+            ## Build Artifacts
+
+            ${{ steps.download-artifact.outputs.build-metadata.json }}
+
+          format: MARKDOWN
