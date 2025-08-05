@@ -8,7 +8,7 @@ jobs:
     steps:
       - name: Run scan workflow
         kind: scan
-        uses: cloudbees-io/ghactions-run-workflow@v2
+        uses: cloudbees-io/ghactions-run-workflow@latest
         with:
           token: ${{ secrets.GHA_TOKEN }}
           org-name: ldorg
