@@ -14,6 +14,6 @@ jobs:
         uses: cloudbees-io-gha/black-duck-scan-publish@998deefed58a1f5ed7417d6ac42c8bf241f0a346
         with:
           api-token: ${{ secrets.BLACK_DUCK_TOKEN }}
-          server-url: ${{ secrets.BLACK_DUCK_URL }}
+          server-url: ${{ vars.BLACK_DUCK_URL }}
           project-name: "blackduck-demo"
           project-version: "1.0.0"
