@@ -34,13 +34,12 @@ jobs:
         run: |
           if [ ${{ steps.blackduck-scan.outputs.critical-count }} -gt 0 ]; then 
             echo "Security gate failed due to ${{ steps.blackduck-scan.outputs.critical-count }} critical vulnerabilities"
-            exit 1
           fi
           # if [ ${{ steps.blackduck-scan.outputs.very-high-count }} -gt 0 ]; then
           #   echo "Security gate failed due to ${{ steps.blackduck-scan.outputs.very-high-count }} very high vulnerabilities"
           #   exit 1
           # fi
-          echo "Security gate passed"
+          exit 1
   build:
     needs:
       - scan
