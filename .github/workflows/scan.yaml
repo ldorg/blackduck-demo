@@ -16,3 +16,4 @@ jobs:
           api-token: ${{ secrets.BLACK_DUCK_TOKEN }}
           server-url: ${{ secrets.BLACK_DUCK_URL }}
           project-name: "blackduck-demo"
+          project-version: "1.0.0"
