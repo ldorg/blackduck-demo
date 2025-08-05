@@ -69,6 +69,6 @@ jobs:
           content: |-
             ## Build Artifacts
 
-            ${{ steps.download-artifact.outputs.build-metadata }}
+            ${{ steps.download-artifact.outputs.file-contents }}
 
           format: MARKDOWN
