@@ -11,9 +11,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Scan with Black Duck SCA
-        uses: cloudbees-io-gha/blackduck-scan-publish@v2
+        uses: cloudbees-io-gha/black-duck-scan-publish@v2
         with:
           api-token: ${{ secrets.BLACK_DUCK_TOKEN }}
           server-url: ${{ secrets.BLACK_DUCK_URL }}
           project-name: "blackduck-demo"
-          
