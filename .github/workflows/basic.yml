@@ -1,0 +1,41 @@
+name: basic
+on:
+  workflow_dispatch:
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Create dummy JSON data
+        run: |
+          mkdir -p artifacts
+          cat > artifacts/data.json << EOF
+          {
+            "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+            "build_number": "${{ github.run_number }}",
+            "commit_sha": "${{ github.sha }}",
+            "repository": "${{ github.repository }}",
+            "workflow": "${{ github.workflow }}",
+            "data": {
+              "users": [
+                {"id": 1, "name": "Alice", "email": "alice@example.com"},
+                {"id": 2, "name": "Bob", "email": "bob@example.com"},
+                {"id": 3, "name": "Charlie", "email": "charlie@example.com"}
+              ],
+              "metrics": {
+                "cpu_usage": 45.2,
+                "memory_usage": 78.9,
+                "disk_usage": 23.1
+              },
+              "status": "success"
+            }
+          }
+          EOF
+      - name: Upload data artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: data
+          path: artifacts/data.json
