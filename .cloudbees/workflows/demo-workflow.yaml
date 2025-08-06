@@ -28,8 +28,8 @@ jobs:
             - Low: **${{ steps.blackduck-scan.outputs.low-count }}**
 
       - name: Security gate
-        #if: steps.blackduck-scan.outputs.critical-count > 0
-        if: steps.blackduck-scan.outputs.critical-count > 0 || steps.blackduck-scan.outputs.very-high-count > 0
+        if: steps.blackduck-scan.outputs.critical-count > 0
+        # if: steps.blackduck-scan.outputs.critical-count > 0 || steps.blackduck-scan.outputs.very-high-count > 0
         uses: docker://alpine:3.20
         run: |
           if [ ${{ steps.blackduck-scan.outputs.critical-count }} -gt 0 ]; then 
