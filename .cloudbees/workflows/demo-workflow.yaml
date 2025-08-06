@@ -61,7 +61,7 @@ jobs:
           github-token: ${{ secrets.GHA_TOKEN }}
           org-name: "ldorg"
           repo-name: "blackduck-demo"
-          run-id: "16760154638"
+          run-id: ${{ steps.call-workflow.outputs.run-id }}
           artifact-name: "build-artifacts"
       - name: Publish evidence
         uses: cloudbees-io/publish-evidence-item@v1
