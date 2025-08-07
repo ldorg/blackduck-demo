@@ -17,7 +17,7 @@ jobs:
           api-token: ${{ secrets.BLACK_DUCK_TOKEN }}
           server-url: ${{ vars.BLACK_DUCK_URL }}
           project-name: "blackduck-demo"
-          project-version: "1.0.0"
+          project-version: "1.0.1"
 
       - name: Print outputs from Blackduck step
         shell: bash
