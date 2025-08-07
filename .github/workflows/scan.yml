@@ -11,9 +11,28 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Scan with Black Duck SCA
-        uses: cloudbees-io-gha/black-duck-scan-publish@998deefed58a1f5ed7417d6ac42c8bf241f0a346
+        id: blackduck-scan
+        uses: cloudbees-io-gha/black-duck-scan-publish@v2
         with:
           api-token: ${{ secrets.BLACK_DUCK_TOKEN }}
           server-url: ${{ vars.BLACK_DUCK_URL }}
           project-name: "blackduck-demo"
           project-version: "1.0.0"
+      - name: Output results
+        run: |
+          mkdir -p artifacts
+          cat > artifacts/scan-results.json << 'EOF'
+          {
+            "critical-count": "${{ steps.blackduck-scan.outputs.critical-count }}",
+            "very-high-count": "${{ steps.blackduck-scan.outputs.very-high-count }}",
+            "high-count": "${{ steps.blackduck-scan.outputs.high-count }}",
+            "medium-count": "${{ steps.blackduck-scan.outputs.medium-count }}",
+            "low-count": "${{ steps.blackduck-scan.outputs.low-count }}"
+          }
+          EOF
+      - name: Upload scan results
+        uses: actions/upload-artifact@v4
+        with:
+          name: scan-results
+          path: artifacts/scan-results.json
+        
