@@ -18,16 +18,27 @@ jobs:
           server-url: ${{ vars.BLACK_DUCK_URL }}
           project-name: "blackduck-demo"
           project-version: "1.0.0"
+
+      - name: Print outputs from Blackduck step
+        shell: bash
+        run: |
+          echo "Outputs from upstream Blackduck step:"
+          echo "Critical Count: ${{ steps.blackduck-scan.outputs.critical-count }}"
+          echo "Very High Count: ${{ steps.blackduck-scan.outputs.very-high-count }}"
+          echo "High Count: ${{ steps.blackduck-scan.outputs.high-count }}"
+          echo "Medium Count: ${{ steps.blackduck-scan.outputs.medium-count }}"
+          echo "Low Count: ${{ steps.blackduck-scan.outputs.low-count }}"
+
       - name: Output results
         run: |
           mkdir -p artifacts
           cat > artifacts/scan-results.json << 'EOF'
           {
-            "critical-count": "${{ steps.blackduck-scan.outputs.critical-count }}",
-            "very-high-count": "${{ steps.blackduck-scan.outputs.very-high-count }}",
-            "high-count": "${{ steps.blackduck-scan.outputs.high-count }}",
-            "medium-count": "${{ steps.blackduck-scan.outputs.medium-count }}",
-            "low-count": "${{ steps.blackduck-scan.outputs.low-count }}"
+            "critical-count": ${{ steps.blackduck-scan.outputs.critical-count }},
+            "very-high-count": ${{ steps.blackduck-scan.outputs.very-high-count }},
+            "high-count": ${{ steps.blackduck-scan.outputs.high-count }},
+            "medium-count": ${{ steps.blackduck-scan.outputs.medium-count }},
+            "low-count": ${{ steps.blackduck-scan.outputs.low-count }}
           }
           EOF
       - name: Upload scan results
